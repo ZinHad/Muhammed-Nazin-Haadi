@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nazin Haadi — Aspiring Security &amp; Digital Forensics Analyst</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+
+  :root{
+    --void: #0a0e14;
+    --panel: #10161f;
+    --panel-line: #1e2733;
+    --text-primary: #e4e9f0;
+    --text-dim: #6b7789;
+    --text-faint: #3d4654;
+    --signal: #ff6b35;
+    --data: #4fd1c5;
+    --ok: #7ee787;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --font-sans: 'Inter', sans-serif;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--void);
+    color:var(--text-primary);
+    font-family:var(--font-sans);
+    line-height:1.6;
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  /* ambient grid texture */
+  body::before{
+    content:'';
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(var(--panel-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--panel-line) 1px, transparent 1px);
+    background-size: 48px 48px;
+    opacity:0.12;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;}
+  }
+
+  a{color:inherit; text-decoration:none;}
+  :focus-visible{outline:2px solid var(--signal); outline-offset:3px;}
+
+  .wrap{max-width:1080px; margin:0 auto; padding:0 32px; position:relative; z-index:1;}
+
+  /* ---------- BOOT OVERLAY ---------- */
+  #boot{
+    position:fixed; inset:0; background:var(--void); z-index:100;
+    font-family:var(--font-mono); font-size:14px; color:var(--ok);
+    padding:40px; overflow:hidden;
+    display:flex; flex-direction:column; justify-content:center;
+    transition:opacity 0.6s ease, visibility 0.6s ease;
+  }
+  #boot.hidden{opacity:0; visibility:hidden;}
+  #boot .line{opacity:0; white-space:pre-wrap; margin-bottom:4px;}
+  #boot .line.show{opacity:1;}
+  #boot .cursor{display:inline-block; width:8px; height:14px; background:var(--ok); animation:blink 1s step-end infinite; vertical-align:text-bottom;}
+  @keyframes blink{50%{opacity:0;}}
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(10,14,20,0.85); backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--panel-line);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 32px; max-width:1080px; margin:0 auto;
+  }
+  .logo{font-family:var(--font-mono); font-weight:600; font-size:15px; letter-spacing:0.02em;}
+  .logo span{color:var(--signal);}
+  .navlinks{display:flex; gap:28px; font-family:var(--font-mono); font-size:12.5px; color:var(--text-dim);}
+  .navlinks a{transition:color 0.2s;}
+  .navlinks a:hover{color:var(--data);}
+  .navlinks a::before{content:'['; color:var(--text-faint);}
+  .navlinks a::after{content:']'; color:var(--text-faint);}
+  .status-dot{width:7px; height:7px; border-radius:50%; background:var(--ok); box-shadow:0 0 8px var(--ok); display:inline-block; margin-right:8px; animation:pulse 2.4s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:0.4;}}
+
+  @media (max-width:720px){ .navlinks{display:none;} }
+
+  /* ---------- HERO ---------- */
+  .hero{padding:120px 0 90px; opacity:0; transform:translateY(12px); transition:opacity 0.8s ease, transform 0.8s ease;}
+  .hero.in{opacity:1; transform:translateY(0);}
+  .eyebrow{font-family:var(--font-mono); font-size:12.5px; color:var(--data); letter-spacing:0.08em; margin-bottom:20px; display:flex; align-items:center;}
+  h1{
+    font-family:var(--font-sans); font-weight:800; font-size:clamp(38px,6vw,64px);
+    line-height:1.06; letter-spacing:-0.02em; max-width:820px;
+  }
+  h1 .accent{color:var(--signal);}
+  .hero-sub{margin-top:22px; font-size:17px; color:var(--text-dim); max-width:560px;}
+
+  .terminal{
+    margin-top:48px; background:var(--panel); border:1px solid var(--panel-line);
+    border-radius:8px; overflow:hidden; max-width:640px;
+    box-shadow:0 20px 60px -20px rgba(0,0,0,0.6);
+  }
+  .terminal-bar{display:flex; align-items:center; gap:6px; padding:10px 14px; background:#0d1219; border-bottom:1px solid var(--panel-line);}
+  .terminal-bar span{width:10px; height:10px; border-radius:50%; background:var(--panel-line);}
+  .terminal-bar .path{margin-left:12px; font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+  .terminal-body{padding:20px; font-family:var(--font-mono); font-size:13px; color:var(--text-dim);}
+  .terminal-body .prompt{color:var(--data);}
+  .terminal-body .out{color:var(--text-primary); margin:2px 0 14px 0;}
+  .terminal-body .comment{color:var(--text-faint);}
+
+  /* ---------- SECTION SHARED ---------- */
+  section{padding:80px 0; border-top:1px solid var(--panel-line);}
+  .section-head{display:flex; align-items:baseline; gap:14px; margin-bottom:44px;}
+  .section-tag{font-family:var(--font-mono); font-size:12px; color:var(--signal); letter-spacing:0.08em;}
+  .section-head h2{font-size:28px; font-weight:700; letter-spacing:-0.01em;}
+  .section-head .rule{flex:1; height:1px; background:var(--panel-line);}
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{display:grid; grid-template-columns:1.3fr 1fr; gap:60px;}
+  .about-grid p{color:var(--text-dim); margin-bottom:16px; font-size:15.5px;}
+  .about-grid p strong{color:var(--text-primary); font-weight:600;}
+  .stat-list{display:flex; flex-direction:column; gap:0; border-top:1px solid var(--panel-line);}
+  .stat-row{display:flex; justify-content:space-between; padding:16px 0; border-bottom:1px solid var(--panel-line); font-family:var(--font-mono); font-size:13px;}
+  .stat-row .k{color:var(--text-dim);}
+  .stat-row .v{color:var(--text-primary); font-weight:600;}
+  @media (max-width:780px){ .about-grid{grid-template-columns:1fr;} }
+
+  /* ---------- SKILLS ---------- */
+  .skills-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--panel-line); border:1px solid var(--panel-line); border-radius:10px; overflow:hidden;}
+  .skill-panel{background:var(--panel); padding:26px 24px;}
+  .skill-panel h3{font-family:var(--font-mono); font-size:12.5px; color:var(--data); letter-spacing:0.06em; margin-bottom:16px;}
+  .skill-panel ul{list-style:none; display:flex; flex-direction:column; gap:9px;}
+  .skill-panel li{font-size:14px; color:var(--text-dim); display:flex; align-items:center; gap:9px;}
+  .skill-panel li::before{content:'▸'; color:var(--signal); font-size:11px;}
+  @media (max-width:780px){ .skills-grid{grid-template-columns:1fr;} }
+
+  /* ---------- PROJECTS (incident-report style) ---------- */
+  .case{
+    background:var(--panel); border:1px solid var(--panel-line); border-radius:10px;
+    padding:28px 30px; margin-bottom:22px; transition:border-color 0.25s;
+  }
+  .case:hover{border-color:var(--data);}
+  .case-top{display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-bottom:14px; font-family:var(--font-mono); font-size:11.5px;}
+  .case-id{color:var(--text-faint);}
+  .sev{padding:3px 9px; border-radius:20px; font-weight:600; letter-spacing:0.03em;}
+  .sev-high{background:rgba(255,107,53,0.12); color:var(--signal);}
+  .sev-med{background:rgba(79,209,197,0.12); color:var(--data);}
+  .case h3{font-size:19px; font-weight:700; margin-bottom:8px;}
+  .case p{color:var(--text-dim); font-size:14.5px; margin-bottom:14px;}
+  .tag-row{display:flex; flex-wrap:wrap; gap:8px;}
+  .tag{font-family:var(--font-mono); font-size:11px; color:var(--text-dim); border:1px solid var(--panel-line); padding:4px 9px; border-radius:5px;}
+
+  /* ---------- CERTS ---------- */
+  .cert-row{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--panel-line); border:1px solid var(--panel-line); border-radius:10px; overflow:hidden;}
+  .cert{background:var(--panel); padding:22px 18px; text-align:center;}
+  .cert .id{font-family:var(--font-mono); font-size:11px; color:var(--text-faint); margin-bottom:8px;}
+  .cert .name{font-weight:700; font-size:14.5px;}
+  .cert .org{font-size:12px; color:var(--text-dim); margin-top:4px;}
+  @media (max-width:780px){ .cert-row{grid-template-columns:repeat(2,1fr);} }
+
+  /* ---------- CONTACT ---------- */
+  .contact-panel{
+    background:var(--panel); border:1px solid var(--panel-line); border-radius:12px;
+    padding:48px; display:flex; justify-content:space-between; align-items:center; gap:30px; flex-wrap:wrap;
+  }
+  .contact-panel h2{font-size:26px; margin-bottom:10px;}
+  .contact-panel p{color:var(--text-dim); max-width:420px;}
+  .btn{
+    font-family:var(--font-mono); font-size:13px; font-weight:600; color:var(--void);
+    background:var(--signal); padding:13px 24px; border-radius:6px; display:inline-flex; align-items:center; gap:8px;
+    transition:transform 0.2s, box-shadow 0.2s;
+  }
+  .btn:hover{transform:translateY(-2px); box-shadow:0 10px 24px -8px rgba(255,107,53,0.5);}
+  .links-inline{display:flex; gap:22px; margin-top:18px; font-family:var(--font-mono); font-size:13px;}
+  .links-inline a{color:var(--text-dim); border-bottom:1px solid transparent; transition:color 0.2s, border-color 0.2s;}
+  .links-inline a:hover{color:var(--data); border-color:var(--data);}
+
+  footer{padding:32px; text-align:center; font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+
+  /* reveal on scroll */
+  .reveal{opacity:0; transform:translateY(16px); transition:opacity 0.7s ease, transform 0.7s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<div id="boot">
+  <div class="line" data-t="&gt; initializing session..."></div>
+  <div class="line" data-t="&gt; loading identity: nazin_haadi.student"></div>
+  <div class="line" data-t="&gt; status: still learning, still curious"></div>
+  <div class="line" data-t="&gt; access granted<span class='cursor'></span>"></div>
+</div>
+
+<header>
+  <nav>
+    <div class="logo">nazin<span>@</span>haadi<span>:~$</span></div>
+    <div class="navlinks">
+      <a href="#about">about</a>
+      <a href="#skills">skills</a>
+      <a href="#work">labs_&amp;_ctfs</a>
+      <a href="#certs">coursework</a>
+      <a href="#contact">contact</a>
+    </div>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <section class="hero" id="hero-section" style="border-top:none; padding-bottom:90px;">
+    <div class="eyebrow"><span class="status-dot"></span>OPEN TO INTERNSHIPS &amp; ENTRY-LEVEL ROLES</div>
+    <h1>Learning to break things,<br>so I can learn to <span class="accent">defend them.</span></h1>
+    <p class="hero-sub">I'm Nazin Haadi, a cybersecurity and digital forensics student building hands-on skills one lab, one CTF, and one late night in a VM at a time. No professional experience yet — just a lot of curiosity and the hours logged to back it up.</p>
+
+    <div class="terminal">
+      <div class="terminal-bar"><span></span><span></span><span></span><div class="path">nazin@haadi — zsh</div></div>
+      <div class="terminal-body">
+        <div><span class="prompt">$</span> whoami</div>
+        <div class="out">cybersecurity &amp; digital forensics student · year 2</div>
+        <div><span class="prompt">$</span> cat focus.txt</div>
+        <div class="out">network security · digital forensics · CTFs · home lab builds</div>
+        <div><span class="prompt">$</span> cat experience.txt <span class="comment"># the honest version</span></div>
+        <div class="out">0 yrs professional · 400+ hrs self-taught &amp; still counting</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="section-head"><span class="section-tag">01</span><h2>About</h2><div class="rule"></div></div>
+    <div class="about-grid reveal">
+      <div>
+        <p>I got interested in security the way a lot of people do — by taking apart something I wasn't supposed to and getting hooked on figuring out how it worked. I'm currently studying <strong>cybersecurity and digital forensics</strong>, and outside of coursework I spend most of my free time in Capture The Flag competitions, home lab builds, and forensic imaging exercises on disk dumps I've corrupted on purpose.</p>
+        <p>I don't have professional experience yet, and I'm not going to pretend otherwise — but I show up, I finish what I start, and I document everything I learn so I can actually explain it later. I'm looking for an internship or entry-level role where I can turn that habit into real work.</p>
+      </div>
+      <div class="stat-list">
+        <div class="stat-row"><span class="k">Years of experience</span><span class="v">0 (and counting up)</span></div>
+        <div class="stat-row"><span class="k">CTF competitions entered</span><span class="v">14</span></div>
+        <div class="stat-row"><span class="k">Home lab uptime</span><span class="v">since freshman year</span></div>
+        <div class="stat-row"><span class="k">Status</span><span class="v">Actively job hunting</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="section-head"><span class="section-tag">02</span><h2>Skills</h2><div class="rule"></div></div>
+    <div class="skills-grid reveal">
+      <div class="skill-panel">
+        <h3>SECURITY FUNDAMENTALS</h3>
+        <ul>
+          <li>Network security basics</li>
+          <li>Vulnerability scanning</li>
+          <li>Linux &amp; Windows hardening</li>
+          <li>CTF challenges (web, crypto, pwn)</li>
+        </ul>
+      </div>
+      <div class="skill-panel">
+        <h3>DIGITAL FORENSICS</h3>
+        <ul>
+          <li>Disk &amp; memory imaging</li>
+          <li>Chain of custody principles</li>
+          <li>Autopsy &amp; FTK basics</li>
+          <li>File system &amp; log analysis</li>
+        </ul>
+      </div>
+      <div class="skill-panel">
+        <h3>TOOLS &amp; LEARNING</h3>
+        <ul>
+          <li>Wireshark &amp; Nmap</li>
+          <li>Python for automation scripts</li>
+          <li>Home lab (VMs, pfSense, Kali)</li>
+          <li>Currently learning: Splunk</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="work">
+    <div class="section-head"><span class="section-tag">03</span><h2>Labs &amp; CTF Write-ups</h2><div class="rule"></div></div>
+
+    <div class="case reveal">
+      <div class="case-top"><span class="case-id">LAB-014</span><span class="sev sev-high">CTF — TOP 15%</span></div>
+      <h3>Reconstructing a deleted file system timeline</h3>
+      <p>Given a corrupted disk image in a university CTF, recovered deleted files and rebuilt a timeline of user activity using Autopsy and manual file carving. Wrote up the full methodology and findings as a mock forensic report.</p>
+      <div class="tag-row"><span class="tag">Digital Forensics</span><span class="tag">Autopsy</span><span class="tag">File Carving</span></div>
+    </div>
+
+    <div class="case reveal">
+      <div class="case-top"><span class="case-id">LAB-011</span><span class="sev sev-med">HOME LAB</span></div>
+      <h3>Building a segmented home network with pfSense</h3>
+      <p>Set up a home lab with VLANs, a pfSense firewall, and an isolated "attack" VM to safely practice exploitation without risking the rest of the network. Documented the build and the mistakes I made getting the firewall rules right.</p>
+      <div class="tag-row"><span class="tag">pfSense</span><span class="tag">Networking</span><span class="tag">Home Lab</span></div>
+    </div>
+
+    <div class="case reveal">
+      <div class="case-top"><span class="case-id">LAB-006</span><span class="sev sev-high">CTF — SOLVED</span></div>
+      <h3>First web exploitation CTF: SQL injection to admin access</h3>
+      <p>My first real CTF web challenge — chained a SQL injection vulnerability with a weak session token to gain admin panel access. Not glamorous, but it's the challenge that got me hooked on offensive security.</p>
+      <div class="tag-row"><span class="tag">Web Exploitation</span><span class="tag">SQL Injection</span><span class="tag">CTF</span></div>
+    </div>
+  </section>
+
+  <section id="certs">
+    <div class="section-head"><span class="section-tag">04</span><h2>Coursework &amp; Certifications</h2><div class="rule"></div></div>
+    <div class="cert-row reveal">
+      <div class="cert"><div class="id">EARNED</div><div class="name">CICSA</div><div class="org">RedTeam Academy</div></div>
+      <div class="cert"><div class="id">EARNED</div><div class="name">AI</div><div class="org">Mangalore University</div></div>
+      <div class="cert"><div class="id">IN PROGRESS</div><div class="name">CSA</div><div class="org">EC-Council</div></div>
+      <div class="cert"><div class="id">PLANNED</div><div class="name">SAL 1</div><div class="org">Try Hack Me</div></div>
+    </div>
+  </section>
+
+  <section id="contact" style="border-bottom:none;">
+    <div class="contact-panel reveal">
+      <div>
+        <h2>Let's talk.</h2>
+        <p>Looking for an internship, entry-level role, or just someone willing to give a self-taught beginner a shot. I learn fast and I show up.</p>
+        <div class="links-inline">
+          <a href="mailto:hadinazin@gmail.com">hadinazin@gmail.com</a>
+          <a href="https://www.linkedin.com/in/nazin-haadi" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="https://github.com/ZinHad" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </div>
+      </div>
+      <a class="btn" href="https://wa.me/+919633879383?text=Hi%20Nazin%2C%20I%20Would%20like%20to%20see%20your%20work." target="_blank">
+    WhatsApp →
+</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>hadinazin@gmail.com:~$ end of transmission — still learning, always logging</footer>
+
+<script>
+  // boot sequence
+  const lines = document.querySelectorAll('#boot .line');
+  lines.forEach((line, i) => {
+    line.textContent = '';
+    line.innerHTML = line.dataset.t;
+    setTimeout(() => line.classList.add('show'), 260 + i * 340);
+  });
+  setTimeout(() => {
+    document.getElementById('boot').classList.add('hidden');
+    document.getElementById('hero-section').classList.add('in');
+  }, 260 + lines.length * 340 + 350);
+
+  // scroll reveal
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
